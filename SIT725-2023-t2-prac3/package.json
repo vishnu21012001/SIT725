@@ -1,0 +1,11 @@
+{
+  "name": "sit725-2023-t2-prac3",
+  "version": "1.0.0",
+  "description": "vishnu-sit725",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vishnu",
+  "license": "ISC"
+}
