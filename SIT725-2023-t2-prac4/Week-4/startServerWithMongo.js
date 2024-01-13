@@ -1,7 +1,7 @@
 let express = require('express');
 let app = express();
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb://localhost:27017";
+const uri = "mongodb+srv://s222357806:sharmaji222@vishnu.mmg1wjx.mongodb.net/?retryWrites=true&w=majority";
 let port = process.env.port || 3000;
 let collection;
 
@@ -33,21 +33,30 @@ app.get('/', function (req, res) {
 });
 
 app.get('/api/cats', (req, res) => {
-    getAllCats((err, result) => {
-        if (!err) {
-            res.json({ statusCode: 200, data: result, message: 'get all cats successful' });
-        }
-    });
+    if (collection) {
+        getAllCats((err, result) => {
+            if (!err) {
+                res.json({ statusCode: 200, data: result, message: 'get all cats successful' });
+            }
+        });
+    } else {
+        res.status(500).json({ statusCode: 500, message: 'Internal Server Error: Database not initialized' });
+    }
 });
 
 app.post('/api/cat', (req, res) => {
-    let cat = req.body;
-    postCat(cat, (err, result) => {
-        if (!err) {
-            res.json({ statusCode: 201, data: result, message: 'success' });
-        }
-    });
+    if (collection) {
+        let cat = req.body;
+        postCat(cat, (err, result) => {
+            if (!err) {
+                res.json({ statusCode: 201, data: result, message: 'success' });
+            }
+        });
+    } else {
+        res.status(500).json({ statusCode: 500, message: 'Internal Server Error: Database not initialized' });
+    }
 });
+
 
 function postCat(cat, callback) {
     collection.insertOne(cat, callback);
@@ -61,14 +70,3 @@ app.listen(port, () => {
     console.log('express server started');
     runDBConnection();
 });
-
-async function runDBConnection() {
-    try {
-        await client.connect();
-        collection = client.db().collection('Cat');
-        console.log(collection);
-    } catch (ex) {
-        console.error("MongoDB Connection Error:", ex);
-        process.exit(1); // Exit the process if MongoDB connection fails
-    }
-}
